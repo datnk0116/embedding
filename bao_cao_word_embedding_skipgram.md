@@ -81,14 +81,14 @@ Quan sát trên hình:
 
 - Các từ tạo thành ba cụm: bốn địa danh (`rome`, `italy`, `france`, `paris`), hai số đếm (`three`, `four`), và bốn từ chỉ người hoặc chức danh (`king`, `queen`, `man`, `woman`).
 - Các cặp có quan hệ rõ rệt nằm gần nhau: `king`–`queen`, `three`–`four`, `france`–`paris`, `italy`–`rome`. Trong cụm địa danh, `paris` gần `france` hơn gần `italy`, và `rome` gần `italy` hơn gần `france`.
-- `man` và `woman` nằm cùng cụm với `king`, `queen` nhưng không gần nhau bằng cặp `king`–`queen`.
+- Trong không gian 100 chiều, từ gần nhất của `man` theo độ tương đồng cosine là `woman`, và `queen` là từ gần thứ hai của `king` (sau `prince`).
 
 Hình cho thấy embedding đã gom các từ theo chủ đề và theo quan hệ, dù mô hình chỉ học từ ngữ cảnh xuất hiện của từ.
 
 ## 5. Nhận xét và hạn chế
 
 - **Tính minh họa của hình:** 10 từ được chọn có chủ đích, theo các cặp đã có quan hệ sẵn, nên hình chỉ minh họa chứ không phải đánh giá khách quan. Báo cáo chưa có đánh giá nội tại định lượng (độ tương đồng cosine, analogy) và chưa có đánh giá ngoại tại.
-- **Giới hạn của phép chiếu:** mọi phép chiếu đều làm mất một phần thông tin, nên quan hệ thấy trên hình 2D chỉ mang tính gợi ý; khoảng cách giữa các cụm của t-SNE không đáng tin. Với chỉ 10 điểm, bố cục còn phụ thuộc vào tham số và hạt giống ngẫu nhiên.
+- **Giới hạn của phép chiếu:** mọi phép chiếu đều làm mất một phần thông tin, nên quan hệ thấy trên hình 2D chỉ mang tính gợi ý; khoảng cách giữa các cụm của t-SNE không đáng tin. Với chỉ 10 điểm, bố cục còn phụ thuộc vào tham số và hạt giống ngẫu nhiên.Hai trục của hình là tọa độ trừu tượng, không có ý nghĩa ngữ nghĩa riêng; xoay hoặc lật hình không làm đổi quan hệ gần xa.
 - **Tương đồng và liên quan:** hai từ tương đồng khi chia sẻ nhiều đặc điểm nghĩa (`three`–`four`), còn hai từ liên quan khi thường xuất hiện trong cùng một tình huống (`france`–`paris`). Embedding dựa trên đồng xuất hiện không tách biệt được hai quan hệ này, nên việc hai từ gần nhau chưa cho biết chúng tương đồng hay liên quan.
 - **Quy mô ngữ liệu:** text8 chỉ khoảng 17 triệu từ, nhỏ hơn nhiều so với ngữ liệu hàng tỷ từ trong nghiên cứu gốc, nên các từ ít xuất hiện có thể có word vector kém chất lượng.
 - **Embedding tĩnh:** mỗi từ chỉ có một vector, nên vector của từ đa nghĩa là sự pha trộn của mọi nghĩa.
