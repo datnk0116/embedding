@@ -10,7 +10,7 @@ from data import build_dataloader
 class SkipGram(nn.Module):
     def __init__(self, vocab_size, dim=100):
         super().__init__()
-        self.in_embed = nn.Embedding(vocab_size, dim)   # embedding cuối cùng
+        self.in_embed = nn.Embedding(vocab_size, dim)   
         self.out_embed = nn.Embedding(vocab_size, dim)
         nn.init.uniform_(self.in_embed.weight, -0.5 / dim, 0.5 / dim)
         nn.init.zeros_(self.out_embed.weight)

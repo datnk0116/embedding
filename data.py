@@ -7,7 +7,6 @@ from torch.utils.data import DataLoader, TensorDataset
 
 
 def read_text8(path, max_words=None):
-    # Nhận dạng theo nội dung file, không dựa vào đuôi .zip
     if zipfile.is_zipfile(path):
         with zipfile.ZipFile(path) as z:
             text = z.read(z.namelist()[0]).decode("utf-8")

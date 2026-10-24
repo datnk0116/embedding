@@ -1,27 +1,22 @@
 # Word Embedding: Skip-gram với Negative Sampling (PyTorch)
 
-Cài đặt từ đầu mô hình **Word2Vec Skip-gram + negative sampling** bằng PyTorch,
-huấn luyện trên bộ dữ liệu **text8** (khoảng 17 triệu từ tiếng Anh từ Wikipedia),
-sau đó đánh giá và trực quan hóa không gian từ bằng t-SNE.
+Cài đặt từ đầu mô hình Skip-gram (word2vec) với negative sampling bằng PyTorch, huấn luyện
+trên ngữ liệu text8 (khoảng 17 triệu từ tiếng Anh từ Wikipedia), sau đó trực quan hóa 10 từ bằng t-SNE.
 
-Báo cáo chi tiết: [REPORT.md](REPORT.md)
+Báo cáo: [bao_cao_word_embedding_skipgram.md](bao_cao_word_embedding_skipgram.md)
 
 ## Cấu trúc thư mục
 
 | File | Chức năng |
 |---|---|
-| `data.py` | Đọc text8, xây từ điển, subsampling, tạo cặp (từ trung tâm, từ ngữ cảnh) |
-| `model.py` | Mô hình Skip-gram, hàm loss negative sampling, vòng lặp huấn luyện |
-| `evaluate.py` | Từ gần nghĩa (cosine) và phép toán từ (`king - man + woman`) |
-| `visualize.py` | Giảm chiều bằng t-SNE/PCA và vẽ biểu đồ |
+| `data.py` | Đọc text8, xây từ vựng, tạo cặp huấn luyện (từ trung tâm, từ ngữ cảnh) |
+| `model.py` | Mô hình Skip-gram, hàm mất mát negative sampling, vòng lặp huấn luyện |
+| `visualize.py` | Giảm chiều bằng t-SNE/PCA và vẽ 10 từ |
 | `word2vec.pt` | Embedding đã huấn luyện (ma trận 31.888 x 100 và danh sách từ) |
-| `embedding.png` | Biểu đồ t-SNE kết quả |
+| `embedding.png` | Hình t-SNE của 10 từ |
 | `requirements.txt` | Thư viện cần cài |
 
-## Cài đặt
-
-Yêu cầu Python 3.10 trở lên (code dùng cú pháp `int | None`).
-Tác giả chạy trên macOS (Apple Silicon), dùng GPU Apple (MPS).
+## Môi trường
 
 ```bash
 python3 -m venv .venv
@@ -29,62 +24,44 @@ source .venv/bin/activate          # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-## Dữ liệu
+Tác giả chạy trên macOS (Apple Silicon), dùng GPU Apple (MPS). Máy không có MPS sẽ tự dùng CPU.
 
-Tải text8 (Kaggle: `gupta24789/text8-word-embedding`) và đặt ở bất kỳ đâu,
-rồi truyền đường dẫn vào lệnh chạy. Hỗ trợ cả file `.zip` lẫn file text đã giải nén.
-Dữ liệu không được đưa vào repo vì dung lượng lớn.
+## Ngữ liệu
 
-Kiểm tra xử lý dữ liệu:
-
-```bash
-python3 data.py path/to/text8.zip
-```
+Tải text8 (http://mattmahoney.net/dc/text8.zip) và truyền đường dẫn vào lệnh chạy.
+Hỗ trợ file `.zip` lẫn file text đã giải nén. Ngữ liệu không nằm trong repo vì dung lượng lớn.
 
 ## Huấn luyện
 
-Cấu hình dùng cho model trong repo (toàn bộ dữ liệu, bỏ từ xuất hiện dưới 20 lần):
+Cấu hình đã dùng cho `word2vec.pt` (toàn bộ ngữ liệu, bỏ từ xuất hiện dưới 20 lần):
 
 ```bash
 python3 model.py path/to/text8.zip --max_words 17000000 --min_count 20 --epochs 5
 ```
 
-Kết quả sinh ra: `word2vec.pt`, `loss.json`, `loss.png`.
+Tham số mặc định: `--dim 100`, `--neg 5`, `--epochs 5`, `--batch_size 4096`,
+`--lr 0.003`, `--max_words 5000000`, `--min_count 20`.
 
-Các tham số chính (mặc định): `--dim 100`, `--neg 5`, `--epochs 5`,
-`--batch_size 4096`, `--lr 0.003`, `--max_words 5000000`, `--min_count 20`.
-Chạy thử với mặc định (5 triệu từ đầu): mỗi epoch khoảng vài chục giây.
-
-## Đánh giá
-
-```bash
-python3 evaluate.py
-python3 evaluate.py --words music water city
-```
-
-In ra bảng từ gần nghĩa và độ chính xác phép toán từ (top-1, top-5).
+Cấu hình trên tạo khoảng 98 triệu cặp huấn luyện (23.946 bước mỗi epoch). Để chạy thử
+nhanh, dùng `--max_words 5000000`.
 
 ## Trực quan hóa
 
 ```bash
-# Vẽ các từ chọn trước cùng 15 từ gần nhất, tô màu theo nhóm
-python3 visualize.py --words king france computer war three
-
-# Vẽ 300 từ phổ biến nhất (bỏ 50 từ chức năng đầu tiên)
-python3 visualize.py
-
-# Dùng PCA thay cho t-SNE, đổi tên file ảnh
-python3 visualize.py --method pca --out embedding_pca.png
+python3 visualize.py                          # 10 từ mặc định, t-SNE
+python3 visualize.py --method pca --out embedding_pca.png            # dùng PCA
+python3 visualize.py --words king queen man woman france paris italy rome three four
 ```
 
-## Kết quả tóm tắt
+Kết quả lưu vào `embedding.png`.
 
-- Từ gần nghĩa hợp lý: `three` gần `four, two, five`; `computer` gần `computers, hardware, computing`;
-  `france` gần `paris, french, spain`.
-- Phép toán từ trên 19 bộ kiểm tra: **top-1 = 7/19 (37%)**, **top-5 = 10/19 (53%)**.
-  Các quan hệ về quốc tịch và thủ đô hoạt động tốt hơn quan hệ giới tính hoàng gia
-  (`king - man + woman` chưa ra `queen`), do dữ liệu text8 nhỏ.
-- Xem phân tích đầy đủ và hình minh họa trong [REPORT.md](REPORT.md).
+## Kết quả
+
+- Mất mát trung bình giảm từ 2,2581 (epoch 1) xuống 2,2072 (epoch 5); từ epoch 2 trở đi
+  mức giảm rất nhỏ.
+- Hình t-SNE 10 từ (`embedding.png`): các cặp có quan hệ như `king`–`queen`,
+  `three`–`four`, `france`–`paris`, `italy`–`rome` nằm gần nhau.
+- Phân tích chi tiết trong báo cáo.
 
 ## Tài liệu tham khảo
 
