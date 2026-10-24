@@ -60,7 +60,7 @@ def build_dataloader(path, max_words=5_000_000, min_count=5, window=5, batch_siz
     vocab = Vocab(words, min_count)
     tokens = vocab.encode(words)
     centers, contexts = make_pairs(tokens, window)
-    print(f"Số từ: {len(words):,} | từ điển: {len(vocab):,} | cặp huấn luyện: {len(centers):,}")
+    print(f"Số từ: {len(words):,} | từ vựng: {len(vocab):,} | cặp huấn luyện: {len(centers):,}")
     dataset = TensorDataset(torch.from_numpy(centers), torch.from_numpy(contexts))
     loader = DataLoader(dataset, batch_size=batch_size, shuffle=True, drop_last=True)
     return loader, vocab, vocab.neg_distribution()
